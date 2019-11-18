@@ -24,7 +24,12 @@
 .logo {
   width: 169px;
   height: 31px;
-  background: #282c34;
+  background: #001529;
   margin: 16px 24px 16px 0;
   float: left;
+}
+
+.btns {
+  height: 31px;
+  
 }
