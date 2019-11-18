@@ -4,8 +4,9 @@ import {Layout, Menu} from 'antd'
 import 'antd/dist/antd.css';
 import './App.css';
 
+import Explorer from './Components/Explorer'
+
 import logo_white from './assets/logo_white.png'
-import logo_black from './assets/logo_black.png'
 
 const {Header, Content, Footer} = Layout;
 
@@ -33,7 +34,7 @@ function App() {
       {/* Content */}
       <Content>
         <div style={{background: '#fff', padding: 24, minHeight: 560}}>
-          Content
+          <Explorer />
         </div>
       </Content>
 

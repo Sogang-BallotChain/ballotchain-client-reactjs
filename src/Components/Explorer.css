@@ -1,0 +1,15 @@
+.explorer-logo {
+    width: 50%;
+    min-height: 280px;
+    margin: 0 25% 0 25%;
+    padding: 140px 0 0 0;
+    float: center;
+    text-align: center;
+}
+
+.explorer-searchbar {
+    width: 50%;
+    min-height: 200px;
+    margin: 0 25% 0 25%;
+    text-align: center;
+}
