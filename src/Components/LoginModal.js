@@ -7,7 +7,7 @@ import {
 
 /* 
     props
-    1) handleCancel (visibility)
+    1) onCancel (visibility)
     2) onLoginSuccess
     3) onLoginFailed
 */
@@ -63,7 +63,7 @@ class LoginModal extends React.Component {
         this.formRef = formRef;
     }
 
-    handleCacel = (e) => {
+    handleCancel = (e) => {
         this.props.onCancel()
         this.formRef.props.form.resetFields();
     }
@@ -95,6 +95,7 @@ class LoginModal extends React.Component {
                 }
             }
         })
+        this.formRef.props.form.resetFields();
     }
 
     render() {

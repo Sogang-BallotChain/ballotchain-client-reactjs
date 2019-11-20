@@ -17,18 +17,6 @@ class App extends React.Component {
     user_email: ""
   }
 
-  onClickLoginBtn = (e) => {
-    this.setState({
-      login_modal_visible: true
-    })
-  }
-
-  onClickLoginCancel = (e) => {
-    this.setState({
-      login_modal_visible: false
-    })
-  }
-
   onClickLogoutBtn = (e) => {
     this.setState({
       user_email: "",
@@ -48,7 +36,7 @@ class App extends React.Component {
     this.setState({
       login_modal_visible: false
     })
-
+    
     notification.open({
       message: 'Login failed!',
       description: '이메일 또는 비밀번호를 다시 확인해주세요.',
@@ -68,15 +56,13 @@ class App extends React.Component {
 
         <div className="btns" style={{top: 0, float: "right"}}>
           {
-            this.state.user_login === false 
-            ?
+            this.state.user_login === false ?
             <div>
-            <Button style = {{margin: "8px 20px 0 0"}}> Signup </Button> 
-            <Button type="primary" style = {{margin: "8px"}} onClick={this.onClickLoginBtn}> Login </Button> 
-            </div>
-            : 
+              <Button style = {{margin: "8px 20px 0 0"}}> Signup </Button> 
+              <Button type="primary" style = {{margin: "8px"}} onClick={()=>this.setState({login_modal_visible: true})}> Login </Button> 
+            </div> : 
             <div>
-            <Button type="danger" style = {{margin: "8px 20px 0 0"}} onClick={this.onClickLogoutBtn}> Logout </Button> 
+              <Button type="danger" style = {{margin: "8px 20px 0 0"}} onClick={this.onClickLogoutBtn}> Logout </Button> 
             </div>
           }
         </div>
@@ -87,9 +73,8 @@ class App extends React.Component {
           defaultSelectedKeys={['1']}
           style = {{lineHeight: '64px'}}
         >
-          <Menu.Item key="1">About us </Menu.Item>
-          <Menu.Item key="2">nav 2</Menu.Item>
-          <Menu.Item key="3">nav 3</Menu.Item>
+          <Menu.Item key="1"> Home </Menu.Item>
+          <Menu.Item key="2"> About us </Menu.Item>
         </Menu>
       </Header>
 
@@ -101,7 +86,7 @@ class App extends React.Component {
 
         <LoginModal 
           visible={this.state.login_modal_visible} 
-          onCancel ={this.onClickLoginCancel} 
+          onCancel ={() => this.setState({login_modal_visible: false})}
           onLoginSuccess = {this.onLoginSuccess}
           onLoginFailed = {this.onLoginFailed}
         />
