@@ -1,6 +1,9 @@
 import React from 'react';
+
 import Explorer from './Components/Explorer'
 import LoginModal from './Components/LoginModal'
+import SignupModal from './Components/SignupModal';
+
 import logo_white from './assets/logo_white.png'
 
 import {Layout, Menu, Button, notification, Icon} from 'antd'
@@ -13,6 +16,7 @@ class App extends React.Component {
 
   state={
     login_modal_visible: false,
+    signup_modal_visible: false,
     user_login: false,
     user_email: ""
   }
@@ -33,10 +37,6 @@ class App extends React.Component {
   }
 
   onLoginFailed = (e) => {
-    this.setState({
-      login_modal_visible: false
-    })
-    
     notification.open({
       message: 'Login failed!',
       description: '이메일 또는 비밀번호를 다시 확인해주세요.',
@@ -54,11 +54,12 @@ class App extends React.Component {
           style={{margin: "16px 24px 16px 0", position: "absolute", top: 0}}alt="fireSpot"/>
         </div>
 
+        {/* Sign up & Login buttons */}
         <div className="btns" style={{top: 0, float: "right"}}>
           {
             this.state.user_login === false ?
             <div>
-              <Button style = {{margin: "8px 20px 0 0"}}> Signup </Button> 
+              <Button style = {{margin: "8px 20px 0 0"}} onClick={()=>this.setState({signup_modal_visible: true})}> Signup </Button> 
               <Button type="primary" style = {{margin: "8px"}} onClick={()=>this.setState({login_modal_visible: true})}> Login </Button> 
             </div> : 
             <div>
@@ -89,6 +90,12 @@ class App extends React.Component {
           onCancel ={() => this.setState({login_modal_visible: false})}
           onLoginSuccess = {this.onLoginSuccess}
           onLoginFailed = {this.onLoginFailed}
+        />
+
+        <SignupModal
+          visible={this.state.signup_modal_visible}
+          onCancel={()=> this.setState({signup_modal_visible: false})}
+          onSubmit={()=> this.setState({signup_modal_visible: false})}
         />
 
       </Content> 

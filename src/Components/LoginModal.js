@@ -7,14 +7,13 @@ import {
 
 /* 
     props
-    1) onCancel (visibility)
+    0) visible
+    1) onCancel
     2) onLoginSuccess
     3) onLoginFailed
 */
 
-const {
-    Header
-} = Layout;
+const { Header } = Layout;
 
 const LoginForm = Form.create({name: 'login'}) (
 
@@ -83,6 +82,7 @@ class LoginModal extends React.Component {
                     if (res.data.success === 1) {
                         console.log("Login success")
                         this.props.onLoginSuccess(values.username)
+                        this.formRef.props.form.resetFields();
                     }
                     else {
                         console.log("Login error")
@@ -95,7 +95,6 @@ class LoginModal extends React.Component {
                 }
             }
         })
-        this.formRef.props.form.resetFields();
     }
 
     render() {
