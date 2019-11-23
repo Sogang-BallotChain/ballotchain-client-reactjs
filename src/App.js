@@ -1,8 +1,9 @@
 import React from 'react';
 
-import Explorer from './Components/Explorer'
 import LoginModal from './Components/LoginModal'
 import SignupModal from './Components/SignupModal';
+
+import VoteJoin from './Pages/VoteJoin'
 
 import logo_white from './assets/logo_white.png'
 
@@ -28,7 +29,8 @@ class App extends React.Component {
     })
   }
 
-  onLoginSuccess = (e, user_email) => {
+  onLoginSuccess = (user_email) => {
+    console.log(user_email)
     this.setState({
       login_modal_visible: false,
       user_login: true,
@@ -81,9 +83,7 @@ class App extends React.Component {
 
       {/* Content */}
       <Content>
-        <div style={{background: '#fff', padding: 24, minHeight: 560}}>
-          <Explorer />
-        </div>
+        <VoteJoin user_email = {this.state.user_email} user_login={this.state.user_login}/>
 
         <LoginModal 
           visible={this.state.login_modal_visible} 
