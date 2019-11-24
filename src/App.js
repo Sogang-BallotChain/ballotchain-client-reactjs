@@ -4,6 +4,7 @@ import LoginModal from './Components/LoginModal'
 import SignupModal from './Components/SignupModal';
 
 import VoteJoin from './Pages/VoteJoin'
+import VoteRegister from './Pages/VoteRegister'
 
 import logo_white from './assets/logo_white.png'
 
@@ -16,10 +17,21 @@ const {Header, Content, Footer} = Layout;
 class App extends React.Component {
 
   state={
+    nav: 'Home',
     login_modal_visible: false,
     signup_modal_visible: false,
     user_login: false,
     user_email: ""
+  }
+
+  getContent() {
+    switch(this.state.nav) {
+      case 'Home': 
+        return <VoteJoin user_email = {this.state.user_email} user_login={this.state.user_login}/>
+      case 'New Ballot': 
+        return <VoteRegister user_email = {this.state.user_email} user_login={this.state.user_login}/>
+      default: return <div>default nav</div>
+    }
   }
 
   onClickLogoutBtn = (e) => {
@@ -43,6 +55,13 @@ class App extends React.Component {
       message: 'Login failed!',
       description: '이메일 또는 비밀번호를 다시 확인해주세요.',
       icon: <Icon type="exclamation" style={{ color: 'red' }} />
+    })
+  }
+
+  onMenuSelect = (obj) => {
+    const selected_menu = obj.key
+    this.setState({
+      nav: selected_menu
     })
   }
 
@@ -73,17 +92,18 @@ class App extends React.Component {
         <Menu
           theme="dark"
           mode = "horizontal"
-          defaultSelectedKeys={['1']}
+          defaultSelectedKeys={[this.state.nav]}
           style = {{lineHeight: '64px'}}
+          onSelect = {this.onMenuSelect}
         >
-          <Menu.Item key="1"> Home </Menu.Item>
-          <Menu.Item key="2"> About us </Menu.Item>
+          <Menu.Item key="Home"> Home </Menu.Item>
+          <Menu.Item key="New Ballot"> New Ballot </Menu.Item>
         </Menu>
       </Header>
 
       {/* Content */}
       <Content>
-        <VoteJoin user_email = {this.state.user_email} user_login={this.state.user_login}/>
+        {this.getContent()}
 
         <LoginModal 
           visible={this.state.login_modal_visible} 

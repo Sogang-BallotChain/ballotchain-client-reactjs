@@ -15,7 +15,8 @@ class Explorer extends React.Component {
                     <img  src={logo_black} alt="fireSpot"/>
                 </div>
                 <div className="explorer-searchbar">
-                    <Search placeholder="참여하려는 투표 코드를 입력하세요!" onSearch={this.props.onSearch} size="large" enterButton="Search"/>
+                    <Search placeholder="참여하려는 투표 코드를 입력하세요!" onSearch={this.props.onSearch} size="large" enterButton="Join"/>
+                    {this.props.addendum}
                 </div>
             </div>
         )

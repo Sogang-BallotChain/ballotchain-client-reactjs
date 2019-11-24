@@ -100,10 +100,17 @@ class VoteJoin extends React.Component {
         }
     }
 
+    /* on click new ballot button */
+    onClickAddButton (e) {
+        console.log("clicked")
+    }
+
     getContent() {
         switch(this.state.nav) {
             case 'search': 
-                return <Explorer onSearch={this.onSearch}/>
+                return <Explorer 
+                onSearch={this.onSearch} 
+                />
             case 'ballot_found':
                 return <Ballot 
                     user_email = {this.props.user_email}
@@ -113,7 +120,7 @@ class VoteJoin extends React.Component {
                     end_time = {this.state.vote_end_time}
                     address = {this.state.vote_address}
                     candidate_list={this.state.vote_candidate_list}
-                    is_ended = {this.state.vote_is_ended} //{false}
+                    is_ended = {false}//{this.state.vote_is_ended} //{false}
                     result = {this.state.vote_result}
                 />
             default:
