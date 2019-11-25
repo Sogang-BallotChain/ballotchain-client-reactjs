@@ -46,9 +46,19 @@ class BallotRegisterForm extends React.Component {
       )
     }
 
+    formHeader = () => {
+      return (
+        <div className='ballot-register-form-header'>
+            <h1> <b>새 투표 생성 </b></h1>
+            <hr></hr>
+        </div>
+      )
+    }
+
     showResult = (status, title, subTitle) => {
       return(
       <React.Fragment>
+      {this.formHeader()}
       <Result
           status={status}
           title={title}
@@ -124,6 +134,7 @@ class BallotRegisterForm extends React.Component {
 
       return (
           <React.Fragment>
+          {this.formHeader()}
           <Form onSubmit={this.handleSubmit}>
               <div className='ballot-register-form' >
               <Form.Item label="1. 투표 주제를 입력해주세요">
@@ -261,11 +272,6 @@ class BallotRegisterForm extends React.Component {
     render () {
         return (
             <React.Fragment>
-            <div className='ballot-register-form-header'>
-                <h1> <b>새 투표 생성 </b></h1>
-                <hr></hr>
-            </div>
-            
             {this.getContent()}
             </React.Fragment>
         )
