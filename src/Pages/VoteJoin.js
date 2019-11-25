@@ -31,8 +31,8 @@ class VoteJoin extends React.Component {
 
     /* Ballot search success */
     onBallotSearchSuccess = (value, data) => {
-        let start_date = moment(new Date(data.start_time)).tz('Asia/Seoul').format('YYYY-MM-DD, HH:mm:ss');
-        let end_date = moment(new Date(data.end_time)).tz('Asia/Seoul').format('YYYY-MM-DD, HH:mm:ss');
+        let start_date = moment(new Date(data.start_time)).tz('Europe/London').format('YYYY-MM-DD, HH:mm:ss');
+        let end_date = moment(new Date(data.end_time)).tz('Europe/London').format('YYYY-MM-DD, HH:mm:ss');
 
         this.setState({
             nav: "ballot_found",
