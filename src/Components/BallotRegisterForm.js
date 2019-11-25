@@ -1,14 +1,13 @@
 import React from 'react'
 import {Form, Input, Button, Icon, DatePicker, notification} from 'antd'
 import './BallotRegisterForm.css'
-
+import axios from 'axios'
 let id = 0;
 /*
     Props
     - user_email, user_login
 */
 class BallotRegisterForm extends React.Component {
-    
     
     addCandidate = () => {
         const { form } = this.props;
@@ -42,10 +41,12 @@ class BallotRegisterForm extends React.Component {
 
     handleSubmit = (e) => {
         e.preventDefault();
-        this.props.form.validateFields((err, fieldsValue) => {
+        this.props.form.validateFields(async (err, fieldsValue) => {
             if (err) {
                 return;
             }
+
+            console.log(fieldsValue)
 
             /* 로그인한 상태이어야 한다. */
             if (this.props.user_login === false) {
@@ -68,9 +69,13 @@ class BallotRegisterForm extends React.Component {
                 })
                 return;
             }
+
+            /* Send request */
+            let res = await axios.post('/vote/register/', {
+              "email": this.props.user_email
+            })
         })
     }
-
 
     render () {
         const formItemLayoutWithOutLabel = {
