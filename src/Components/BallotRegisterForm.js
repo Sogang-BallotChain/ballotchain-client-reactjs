@@ -241,6 +241,7 @@ class BallotRegisterForm extends React.Component {
                 description: '종료시간이 시작시간보다 이릅니다!',
                 icon: <Icon type="exclamation" style={{ color: 'red' }} />
               })
+              return;
             }
 
             /* Send request */
