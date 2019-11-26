@@ -235,6 +235,7 @@ class BallotRegisterForm extends React.Component {
             /* Change dates to timestamps */
             var start_timestamp = moment(fieldsValue.ballot_start_time._d).tz('Europe/London').unix() * 1000
             var end_timestamp = moment(fieldsValue.ballot_end_time._d).tz('Europe/London').unix() * 1000
+            console.log(start_timestamp, end_timestamp)
             if (start_timestamp > end_timestamp) {
               notification.open({
                 message: '투표 생성 실패!',
@@ -244,12 +245,15 @@ class BallotRegisterForm extends React.Component {
               return;
             }
 
+            const names = fieldsValue.names;
+            const candidate_list = keys.map(key => names[key])
+
             /* Send request */
             this.setState({nav: 'loading'})
             let res = await axios.post('/vote/register/', {
               "email": this.props.user_email,
               "name": fieldsValue.ballot_name,
-              "candidate_list": fieldsValue.names,
+              "candidate_list": candidate_list,
               "start_time": start_timestamp,
               "end_time": end_timestamp
             })
