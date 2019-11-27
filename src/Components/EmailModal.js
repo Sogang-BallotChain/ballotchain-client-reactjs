@@ -39,7 +39,7 @@ const LoginForm = Form.create({name: 'login'}) (
                                     )}
                                 </Form.Item>
                                 <Form.Item>
-                                    <Button type="primary" style={{backgroundColor: "green"} } htmlType="submit" className="login-form-button" block>
+                                    <Button type="primary" style={{backgroundColor: "green", borderColor: "green"} } htmlType="submit" className="login-form-button" block>
                                         Check
                                     </Button>
                                 </Form.Item>
@@ -104,7 +104,6 @@ class EmailModal extends React.Component {
                     if (res.data.success === 1) {
                         console.log("Verification success")
                         this.props.onSuccess()
-                        this.formRef.props.form.resetFields();
                     }
                     else {
                         console.log("Verification error")

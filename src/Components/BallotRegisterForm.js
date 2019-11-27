@@ -1,5 +1,5 @@
 import React from 'react'
-import {Form, Input, Button, Icon, DatePicker, Result, Spin, notification} from 'antd'
+import {Form, Input, Button, Icon, DatePicker, Result, Spin, Row, Col, notification} from 'antd'
 
 import VoteJoin from '../Pages/VoteJoin'
 import EmailModal from './EmailModal'
@@ -53,6 +53,30 @@ class BallotRegisterForm extends React.Component {
           <Spin tip="Loading ... ">
               {component}
           </Spin>
+      )
+    }
+
+    /* eamil 인증 modal */
+    showEmailModal = () => {
+      return (
+        <EmailModal
+              user_email={this.props.user_email}
+              visible={this.state.email_modal_visible} 
+              onCancel={()=>{
+                this.setState({email_modal_visible: false})
+              }}
+              onSuccess={()=>{
+                this.onVerificationSuccess()
+                this.setState({email_modal_visible: false})
+              }}
+              onFail={()=>{
+                notification.open({
+                message: '이메일 인증 실패!',
+                description: '인증 코드가 일치하지 않습니다!',
+                icon: <Icon type="exclamation" style={{ color: 'red' }} />
+              })
+            }}
+          />
       )
     }
 
@@ -155,6 +179,7 @@ class BallotRegisterForm extends React.Component {
                           rules: [{required: true, message: 'Please input ballot name'}]
                       })(<Input placeholder={"투표 주제를 입력해주세요"}/>)}   
               </Form.Item>
+              <hr style={{ display: "block", height: "1px", border: 0, borderTop: "1px solid #dcdcdc", margin: "1em 0", padding: 0 }} />
               <Form.Item label="2. 후보자를 추가해주세요">
                   {formItems}
               </Form.Item>
@@ -163,16 +188,23 @@ class BallotRegisterForm extends React.Component {
                   <Icon type="plus" /> 후보 추가
               </Button>
               </Form.Item>
-              <Form.Item label="3. 투표 시작 시간을 선택하세요">
+              <hr style={{ display: "block", height: "1px", border: 0, borderTop: "1px solid #dcdcdc", margin: "1em 0", padding: 0 }} />
+              <Row>
+                <Col span={24}>
+                  <Form.Item label="3. 투표 시작 시간을 선택하세요">
                   {getFieldDecorator('ballot_start_time', date_config)(
                       <DatePicker showTime format="YYYY-MM-DD HH:mm:ss" />,
                   )}
-              </Form.Item>
-              <Form.Item label="4. 투표 종료 시간을 선택하세요">
-                  {getFieldDecorator('ballot_end_time', date_config)(
-                      <DatePicker showTime format="YYYY-MM-DD HH:mm:ss" />,
-                  )}
-              </Form.Item>
+                  </Form.Item>
+                </Col>
+                <Col span={24} offset={0}>
+                  <Form.Item label="4. 투표 종료 시간을 선택하세요">
+                    {getFieldDecorator('ballot_end_time', date_config)(
+                      < DatePicker showTime format="YYYY-MM-DD HH:mm:ss" />,
+                    )}
+                  </Form.Item>
+                </Col>
+              </Row>
               </div>
               <div className="ballot-header"><hr></hr></div>
               <div style={{textAlign: "center"}}>
@@ -305,56 +337,16 @@ class BallotRegisterForm extends React.Component {
             this.setState({
               email_modal_visible: true
             })
-
-            /* Send request */
-            /*
-            this.setState({nav: 'loading'})
-            let res = await axios.post('/vote/register/', {
-              "email": this.props.user_email,
-              "name": fieldsValue.ballot_name,
-              "candidate_list": candidate_list,
-              "start_time": start_timestamp,
-              "end_time": end_timestamp
-            })
-
-            if (res.status === 200) {
-              let json_body = res.data
-              let success = json_body.success
-              if (success === 1) {
-                this.setState({nav: 'success'})
-              }
-              else {
-                this.setState({nav: 'fail', error_message: json_body.message})
-              }
-            }
-            else {
-              this.setState({nav: 'warning'})
-            }
-            */
         })
     }
 
     render () {
         return (
             <React.Fragment>
-              <EmailModal
-                user_email={this.props.user_email}
-                visible={this.state.email_modal_visible} 
-                onCancel={()=>{
-                  this.setState({email_modal_visible: false})
-                }}
-                onSuccess={()=>{
-                  this.onVerificationSuccess()
-                  this.setState({email_modal_visible: false})
-                }}
-                onFail={()=>{
-                  notification.open({
-                    message: '이메일 인증 실패!',
-                    description: '인증 코드가 일치하지 않습니다!',
-                    icon: <Icon type="exclamation" style={{ color: 'red' }} />
-                  })
-                }}
-              />
+              { this.state.email_modal_visible === true 
+              ? this.showEmailModal()
+              : <React.Fragment> </React.Fragment>}
+              
               {this.getContent()}
             </React.Fragment>
         )

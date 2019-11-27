@@ -30,7 +30,7 @@ class Ballot extends React.Component {
     }
 
     /* 초기화 함수 */
-    componentWillMount() {
+    componentDidMount() {
         this.setState({
             candidate_list: this.props.candidate_list
         })
@@ -46,6 +46,30 @@ class Ballot extends React.Component {
             })
         }
     }
+
+    /* 이메일 인증 modal 출력 */
+    showEmailModal = () => {
+        return(
+            <EmailModal
+                user_email={this.props.user_email}
+                visible={this.state.email_modal_visible}
+                onCancel={()=>{
+                    this.setState({email_modal_visible: false})
+                }}
+                onSuccess={()=>{
+                    this.onVerificationSuccess()
+                    this.setState({email_modal_visible: false})
+                }}
+                onFail={()=>{
+                    notification.open({
+                        message: '이메일 인증 실패!',
+                        description: '인증 코드가 일치하지 않습니다!',
+                        icon: <Icon type="exclamation" style={{ color: 'red' }} />
+                    })
+                }}
+            />
+        )
+    } 
 
     /* 투표 정보 보여주는 함수 */
     ballotInfo = () => {
@@ -223,24 +247,9 @@ class Ballot extends React.Component {
     render() {
     return (
         <React.Fragment>
-            <EmailModal
-                user_email={this.props.user_email}
-                visible={this.state.email_modal_visible}
-                onCancel={()=>{
-                    this.setState({email_modal_visible: false})
-                }}
-                onSuccess={()=>{
-                    this.onVerificationSuccess()
-                    this.setState({email_modal_visible: false})
-                }}
-                onFail={()=>{
-                    notification.open({
-                        message: '이메일 인증 실패!',
-                        description: '인증 코드가 일치하지 않습니다!',
-                        icon: <Icon type="exclamation" style={{ color: 'red' }} />
-                    })
-                }}
-            />
+            { this.state.email_modal_visible === true 
+            ? this.showEmailModal()
+            : <React.Fragment> </React.Fragment>}
             {this.getContent()}
         </React.Fragment>
     )}
