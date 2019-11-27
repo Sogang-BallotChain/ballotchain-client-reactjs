@@ -2,6 +2,8 @@ import React from 'react'
 import {Form, Input, Button, Icon, DatePicker, Result, Spin, notification} from 'antd'
 
 import VoteJoin from '../Pages/VoteJoin'
+import EmailModal from './EmailModal'
+
 import './BallotRegisterForm.css'
 import axios from 'axios'
 
@@ -16,7 +18,14 @@ class BallotRegisterForm extends React.Component {
     
     state = {
       nav: 'register_form',
-      error_message: ''
+      error_message: '',
+      email_modal_visible: false,
+
+      ballot_email: '', 
+      ballot_name: '',
+      ballot_candidate_list: [],
+      ballot_start_time: 0,
+      ballot_end_time: 0
     }
 
     getContent = () => {
@@ -38,6 +47,7 @@ class BallotRegisterForm extends React.Component {
       }
     }
 
+    /* Loading spin wrapper */
     loading = (component) => {
       return (
           <Spin tip="Loading ... ">
@@ -46,6 +56,7 @@ class BallotRegisterForm extends React.Component {
       )
     }
 
+    /* 헤더 부분 출력하는 함수 */
     formHeader = () => {
       return (
         <div className='ballot-register-form-header'>
@@ -55,6 +66,7 @@ class BallotRegisterForm extends React.Component {
       )
     }
 
+    /* 투표 생성 결과 (실패, 경고, 성공) 을 출력하는 함수 */ 
     showResult = (status, title, subTitle) => {
       return(
       <React.Fragment>
@@ -72,6 +84,7 @@ class BallotRegisterForm extends React.Component {
       </React.Fragment>
     )}
 
+    /* 투표 생성 Form */
     registerForm () {
       const formItemLayoutWithOutLabel = {
           wrapperCol: {
@@ -202,6 +215,34 @@ class BallotRegisterForm extends React.Component {
         });
     };
 
+    onVerificationSuccess = async () => {
+
+      /* API call */
+      this.setState({nav: 'loading'})
+      let res = await axios.post('/vote/register/', {
+        "email": this.state.ballot_email,
+        "name": this.state.ballot_name,
+        "candidate_list": this.state.ballot_candidate_list,
+        "start_time": this.state.ballot_start_time,
+        "end_time": this.state.ballot_end_time
+      })
+
+      /* API 호출 결과에 따른 화면 출력 */
+      if (res.status === 200) {
+        let json_body = res.data
+        let success = json_body.success
+        if (success === 1) {
+          this.setState({nav: 'success'})
+        }
+        else {
+          this.setState({nav: 'fail', error_message: json_body.message})
+        }
+      }
+      else {
+        this.setState({nav: 'warning'})
+      }
+    }
+
     /* 투표지 제출 */
     handleSubmit = (e) => {
         e.preventDefault();
@@ -220,9 +261,18 @@ class BallotRegisterForm extends React.Component {
                 return;
             }
 
-            /* 한 명 이상의 후보를 입력해야 한다. */
             const { getFieldValue } = this.props.form;
+
+            /* 후보자 목록 형성 */
             const keys = getFieldValue('keys');
+            const names = fieldsValue.names;
+            const candidate_list = keys.map(key => names[key])
+
+            /* Change dates to timestamps */
+            const start_timestamp = moment(fieldsValue.ballot_start_time._d).tz('Europe/London').unix() * 1000
+            const end_timestamp = moment(fieldsValue.ballot_end_time._d).tz('Europe/London').unix() * 1000
+
+            /* 한 명 이상의 후보를 입력해야 한다. */
             if (keys.length === 0) {
                 notification.open({
                     message: '투표 생성 실패!',
@@ -232,10 +282,7 @@ class BallotRegisterForm extends React.Component {
                 return;
             }
 
-            /* Change dates to timestamps */
-            var start_timestamp = moment(fieldsValue.ballot_start_time._d).tz('Europe/London').unix() * 1000
-            var end_timestamp = moment(fieldsValue.ballot_end_time._d).tz('Europe/London').unix() * 1000
-            console.log(start_timestamp, end_timestamp)
+            /* 시작 시간이 끝 시간보다 이를 경우 */
             if (start_timestamp > end_timestamp) {
               notification.open({
                 message: '투표 생성 실패!',
@@ -245,10 +292,22 @@ class BallotRegisterForm extends React.Component {
               return;
             }
 
-            const names = fieldsValue.names;
-            const candidate_list = keys.map(key => names[key])
+            /* 폼 결과를 state 에 저장하여 이후 onVerificationSuccess 에서 사용할 수 있게 함 */
+            this.setState({
+              ballot_email: this.props.user_email,
+              ballot_name: fieldsValue.ballot_name,
+              ballot_candidate_list: candidate_list,
+              ballot_start_time: start_timestamp,
+              ballot_end_time: end_timestamp
+            })
+
+            /* 본인 인증 창 보여줌 */
+            this.setState({
+              email_modal_visible: true
+            })
 
             /* Send request */
+            /*
             this.setState({nav: 'loading'})
             let res = await axios.post('/vote/register/', {
               "email": this.props.user_email,
@@ -271,13 +330,32 @@ class BallotRegisterForm extends React.Component {
             else {
               this.setState({nav: 'warning'})
             }
+            */
         })
     }
 
     render () {
         return (
             <React.Fragment>
-            {this.getContent()}
+              <EmailModal
+                user_email={this.props.user_email}
+                visible={this.state.email_modal_visible} 
+                onCancel={()=>{
+                  this.setState({email_modal_visible: false})
+                }}
+                onSuccess={()=>{
+                  this.onVerificationSuccess()
+                  this.setState({email_modal_visible: false})
+                }}
+                onFail={()=>{
+                  notification.open({
+                    message: '이메일 인증 실패!',
+                    description: '인증 코드가 일치하지 않습니다!',
+                    icon: <Icon type="exclamation" style={{ color: 'red' }} />
+                  })
+                }}
+              />
+              {this.getContent()}
             </React.Fragment>
         )
     }

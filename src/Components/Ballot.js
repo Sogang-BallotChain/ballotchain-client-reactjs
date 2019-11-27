@@ -223,7 +223,8 @@ class Ballot extends React.Component {
     render() {
     return (
         <React.Fragment>
-            <EmailModal 
+            <EmailModal
+                user_email={this.props.user_email}
                 visible={this.state.email_modal_visible}
                 onCancel={()=>{
                     this.setState({email_modal_visible: false})

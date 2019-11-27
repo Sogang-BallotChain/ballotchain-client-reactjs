@@ -13,6 +13,7 @@ const moment = require('moment-timezone')
     1) onCancel
     2) onSuccess
     3) onFailed
+    4) user_email
 */
 
 const { Header } = Layout;
@@ -64,7 +65,7 @@ class EmailModal extends React.Component {
 
     callApi = async () => {
         const res = await axios.post('/vote/verification/', {
-            "email": "omnipede@naver.com",
+            "email": this.props.user_email,
             "start_time": (moment().tz('Asia/Seoul').unix() + 600) * 1000 ,
             "end_time": (moment().tz('Asia/Seoul').unix() + 600) * 1000
         });
@@ -93,7 +94,7 @@ class EmailModal extends React.Component {
                 console.log('Received values of form: ', values);
                 console.log('check clicked')
                 const res = await axios.post('/vote/check/', {
-                    "email": "omnipede@naver.com",
+                    "email": this.props.user_email,
                     "code": values.email_verification_code,
                     "start_time": (moment().tz('Asia/Seoul').unix() + 600) * 1000 ,
                     "end_time": (moment().tz('Asia/Seoul').unix() + 600) * 1000
