@@ -120,7 +120,7 @@ class VoteJoin extends React.Component {
                     end_time = {this.state.vote_end_time}
                     address = {this.state.vote_address}
                     candidate_list={this.state.vote_candidate_list}
-                    is_ended = {false}//{this.state.vote_is_ended} //{false}
+                    is_ended = {this.state.vote_is_ended}
                     result = {this.state.vote_result}
                 />
             default:

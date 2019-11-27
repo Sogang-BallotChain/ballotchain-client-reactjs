@@ -5,11 +5,13 @@ import './Ballot.css'
 import axios from 'axios'
 
 import VoteJoin from '../Pages/VoteJoin'
+import EmailModal from '../Components/EmailModal'
 
 const radioStyle = {
     display: 'block',
     height: '30px',
     lineHeight: '30px',
+    selected_candidate: 0
 };
 
 /*
@@ -17,14 +19,14 @@ const radioStyle = {
     - user_email, user_login, vote_id, name, start_time, end_time, address, candidates_list, is_ended, result
  */
 
-
 /* 투표 용지 컴포넌트 */
 class Ballot extends React.Component {
 
     state = {
-        nav: "select",
-        candidates_list: [],
-        submit_loading: false
+        nav:'select',
+        candidate_list: [],
+        submit_loading: false,
+        email_modal_visible: false
     }
 
     /* 초기화 함수 */
@@ -153,37 +155,47 @@ class Ballot extends React.Component {
         </React.Fragment>
     )}
 
+    /* 이메일 인증 통과할 경우 */
+    onVerificationSuccess = async () =>{
+        this.setState({ nav: 'loading' })
+            let res = await axios.post('/vote/', {
+                "email": this.props.user_email,
+                "vote_id": this.props.vote_id,
+                "candidate": this.state.selected_candidate //values.candidate_list
+            })
+            console.log(res)
+
+            /* Response 200 */
+            if (res.status === 200) {
+                let json_body = res.data
+                let success = json_body.success
+                if (success === 1) {
+                    this.setState({ nav: 'vote_success' })
+                }
+                else {
+                    this.setState({ nav: 'vote_warning' })
+                }
+            }
+            else if (res.status === 504) {
+                this.setState({ nav: 'vote_success' })
+            }
+            /* Response 500 ~ 504 */
+            else {
+                this.setState({ nav: 'vote_fail' })
+            }
+    }
+
     /* 투표 제출 시 호출하는 함수 */
     handleSubmit = (e) => {
         e.preventDefault();
         this.props.form.validateFields(async (err, values) => {
             if (!err) {
-                this.setState({ nav: 'loading' })
-                let res = await axios.post('/vote/', {
-                    "email": this.props.user_email,
-                    "vote_id": this.props.vote_id,
-                    "candidate": values.candidate_list
-                })
-                console.log(res)
 
-                /* Response 200 */
-                if (res.status === 200) {
-                    let json_body = res.data
-                    let success = json_body.success
-                    if (success === 1) {
-                        this.setState({nav: 'vote_success'})
-                    }
-                    else {
-                        this.setState({nav: 'vote_warning'})
-                    }
-                }
-                else if (res.status === 504) {
-                    this.setState({nav: 'vote_success'})
-                }
-                /* Response 500 ~ 504 */
-                else {
-                    this.setState({nav: 'vote_fail'})
-                }
+                /* 이메일 인증 modal 띄움 -> 이후 통과하면 api call 진행 */
+                this.setState({email_modal_visible: true})
+
+                /* 후보 세팅 */
+                this.setState({selected_candidate: values.candidate_list})
             }
             else {
                 notification.open({
@@ -211,6 +223,23 @@ class Ballot extends React.Component {
     render() {
     return (
         <React.Fragment>
+            <EmailModal 
+                visible={this.state.email_modal_visible}
+                onCancel={()=>{
+                    this.setState({email_modal_visible: false})
+                }}
+                onSuccess={()=>{
+                    this.onVerificationSuccess()
+                    this.setState({email_modal_visible: false})
+                }}
+                onFail={()=>{
+                    notification.open({
+                        message: '이메일 인증 실패!',
+                        description: '인증 코드가 일치하지 않습니다!',
+                        icon: <Icon type="exclamation" style={{ color: 'red' }} />
+                    })
+                }}
+            />
             {this.getContent()}
         </React.Fragment>
     )}
