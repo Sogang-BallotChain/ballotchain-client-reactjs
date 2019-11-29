@@ -63,6 +63,14 @@ const data = [
 
 class BallotList extends React.Component {
 
+    state = {
+        page: 1
+    }
+
+    constructor (props) {
+        super(props)
+        this.fetchList()
+    }
     /*
         1) 투표 번호
         2) 투표 제목
@@ -71,18 +79,43 @@ class BallotList extends React.Component {
         5) 종료 시간
     */
     fetchList = async () => {
+
+        /* TODO: set loading flag */
         let res = await axios.post('/vote/profile/', {
             "flag": this.props.flag,
             "email": this.props.user_email,
-            "page": 1
+            "page": this.state.page
         })
 
-        console.log(res)
+        /*  */
+        if (res.status === 200) {
+            let json_body = res.data;
+            let success = json_body.success;
+            
+            if (success === 1) {
+                let id_list = json_body.data;
+                console.log(id_list)
+                
+                for(var idx in id_list) {
+                    let vote_id = id_list[idx]
+                    this.fetchListEntry(vote_id)
+                }   
+            }
+            else {
+
+            }
+        }
+        else {
+
+        }
     }
 
     /* vote_id 에 해당하는 투표 정보를 가져옴 */
-    fetchListEntry = () => {
+    fetchListEntry = async (vote_id) => {
+        let res = await axios.get('/vote/' + vote_id)
+        if (res === 200) {
 
+        }
     }
 
     listHeader () {

@@ -19,7 +19,7 @@ const {Header, Content, Footer} = Layout;
 class App extends React.Component {
 
   state={
-    nav: 'JoinList',//nav: 'Home',
+    nav: 'Home',
     login_modal_visible: false,
     signup_modal_visible: false,
     user_login: false,
