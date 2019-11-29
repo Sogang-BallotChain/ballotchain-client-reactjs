@@ -5,7 +5,8 @@ import SignupModal from './Components/SignupModal';
 
 import VoteJoin from './Pages/VoteJoin'
 import VoteRegister from './Pages/VoteRegister'
-import VoteList from './Pages/VoteList'
+import JoinList from './Pages/JoinList'
+import RegisterList from './Pages/RegisterList'
 
 import logo_white from './assets/logo_white.png'
 
@@ -33,7 +34,9 @@ class App extends React.Component {
       case 'New Ballot': 
         return <VoteRegister user_email = {this.state.user_email} user_login={this.state.user_login}/>
       case 'JoinList':
-        return <VoteList user_email = {this.state.user_email} user_login={this.state.user_login} flag="join" />
+        return <JoinList user_email = {this.state.user_email} user_login={this.state.user_login}/>
+      case 'RegisterList':
+          return <RegisterList user_email = {this.state.user_email} user_login={this.state.user_login}/>
       default: return <div>default nav</div>
     }
   }
@@ -69,11 +72,18 @@ class App extends React.Component {
     })
   }
 
+  onPopoverSelect = (obj) => {
+    const selected_popover = obj.key
+    this.setState({
+      nav: selected_popover
+    })
+  }
+
   render () {
 
   /* 우상단 유저 popover 메뉴 */
   const popover = (
-    <Menu onSelect = {this.onMenuSelect}>
+    <Menu onSelect = {this.onPopoverSelect}>
       <SubMenu title="투표 목록">
         <Menu.Item key="JoinList"> 참여한 투표 목록 </Menu.Item>
         <Menu.Item key="RegisterList"> 생성한 투표 목록 </Menu.Item>

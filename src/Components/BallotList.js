@@ -1,8 +1,11 @@
 import React from 'react'
-import {Table} from 'antd'
+import {Table, Spin, Button, Icon} from 'antd'
 import axios from 'axios'
 
 import './BallotList.css'
+
+const moment = require('moment-timezone')
+
 /*
     Props
     1) flag
@@ -11,111 +14,114 @@ import './BallotList.css'
     4) user_email
 */
 
+/* Columns of table */
 const columns = [
-    {
-        title: 'ID',
-        dataIndex: 'id',
-        key: 'id,'
-    },
-    {
-      title: 'Name',
-      dataIndex: 'name',
-      key: 'name',
-    },
-    {
-      title: 'Address',
-      dataIndex: 'address',
-      key: 'address',
-    },
-    {
-      title: 'Start time',
-      dataIndex: 'start_time',
-      key: 'start_time',
-    },
-    {
-        title: 'End time',
-        dataIndex: 'end_time',
-        key: 'end_time',
-    }
+    { title: 'ID', dataIndex: 'id', key: 'id,'},
+    { title: 'Name', dataIndex: 'name', key: 'name'},
+    { title: 'Address', dataIndex: 'address', key: 'address'},
+    { title: 'Start time', dataIndex: 'start_time', key: 'start_time'},
+    { title: 'End time', dataIndex: 'end_time', key: 'end_time'}
 ];
-
-const data = [
-    {
-      key: '1',
-      name: 'John Brown',
-      age: 32,
-      address: 'New York No. 1 Lake Park',
-    },
-    {
-      key: '2',
-      name: 'Jim Green',
-      age: 42,
-      address: 'New York No. 1 Lake Park',
-    },
-    {
-      key: '3',
-      name: 'Joe Black',
-      age: 32,
-      address: 'New York No. 1 Lake Park',
-    },
-];
-
 
 class BallotList extends React.Component {
 
     state = {
-        page: 1
+        loading: false,
+        page: 1,
+        dataSource: [],
+        id_list: []
     }
 
-    constructor (props) {
-        super(props)
+    componentDidMount() {
         this.fetchList()
     }
-    /*
-        1) 투표 번호
-        2) 투표 제목
-        3) 블록체인 주소
-        4) 시작 시간
-        5) 종료 시간
-    */
+
+    getContent() {
+        if (this.state.loading === true)
+            return this.loading(this.list())
+        else
+            return this.list()
+    }
+
+    nextPage = async () => {
+        await this.setState({page: this.state.page + 1})
+        this.fetchList()
+    }
+
+    prevPage = async () => {
+        if (this.state.page > 1) {
+            await this.setState({page: this.state.page - 1})
+            this.fetchList()
+        }
+    }
+
     fetchList = async () => {
 
-        /* TODO: set loading flag */
+        /* set loading flag */
+        this.setState({loading: true})
+
+        /* call api */
         let res = await axios.post('/vote/profile/', {
             "flag": this.props.flag,
             "email": this.props.user_email,
             "page": this.state.page
         })
 
-        /*  */
+        /* 데이터를 받아서 테이블에 뿌린다. */
         if (res.status === 200) {
             let json_body = res.data;
             let success = json_body.success;
             
             if (success === 1) {
+
+                /* 마지막 페이지인지 확인한다. */
                 let id_list = json_body.data;
-                console.log(id_list)
-                
+                if (JSON.stringify(this.state.id_list) === JSON.stringify(id_list)) {
+                    await this.setState({loading: false, page: this.state.page - 1})
+                    return;
+                }
+                this.setState({id_list: id_list})
+
+                let temp = []
                 for(var idx in id_list) {
                     let vote_id = id_list[idx]
-                    this.fetchListEntry(vote_id)
-                }   
-            }
-            else {
-
+                    let v = await this.fetchListEntry(idx, vote_id)
+                    temp.push(v)
+                }
+                this.setState({dataSource: temp})
             }
         }
-        else {
 
-        }
+        /* Unset loading flag */
+        this.setState({loading: false})
     }
 
     /* vote_id 에 해당하는 투표 정보를 가져옴 */
-    fetchListEntry = async (vote_id) => {
+    fetchListEntry = async (idx, vote_id) => {
         let res = await axios.get('/vote/' + vote_id)
-        if (res === 200) {
-
+        if (res.status === 200) {
+            let json_body = res.data
+            let success = json_body.success
+            if (success === 1) {
+                let data = json_body.data
+                return {
+                    key: idx,
+                    id: vote_id,
+                    name: data.name,
+                    address: data.address,
+                    start_time: moment(new Date(data.start_time)).tz('Europe/London').format('YYYY-MM-DD, HH:mm:ss'),
+                    end_time: moment(new Date(data.end_time)).tz('Europe/London').format('YYYY-MM-DD, HH:mm:ss')
+                }
+            }
         }
+    }
+
+    loading = (component) => {
+        return (
+            <Spin tip="Loading ... ">
+                {component}
+            </Spin>
+        )
     }
 
     listHeader () {
@@ -131,7 +137,23 @@ class BallotList extends React.Component {
     list() {
         return (
             <div className="ballot-list">
-                <Table columns={columns} dataSource={data} />
+                <Table columns={columns} dataSource={this.state.dataSource} pagination={false} bordered={true} 
+                onRow={(record, rowIndex) => {
+                    return {
+                      onClick: event => {console.log(record, rowIndex)}, // click row
+                    };
+                }}/>
+            </div>
+        )
+    }
+
+    listBottom () {
+        return (
+            <div className="ballot-list-bottom">
+                <div style={{float: "right", margin: "20px 0 0 0"}}>
+                    <Button type="primary" style={{margin: "0 20px 0 0"}} onClick={this.prevPage}> <Icon type="left" /> prev </Button>
+                    <Button type="primary" style={{margin: "0 20px 0 0"}} onClick={this.nextPage}> next <Icon type="right" /> </Button>
+                </div>
             </div>
         )
     }
@@ -140,7 +162,8 @@ class BallotList extends React.Component {
         return (
             <React.Fragment>
                 {this.listHeader()}
-                {this.list()}
+                {this.getContent()}
+                {this.listBottom()}
             </React.Fragment>
         )
     }
