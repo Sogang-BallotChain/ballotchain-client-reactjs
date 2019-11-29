@@ -42,7 +42,7 @@ class VoteJoin extends React.Component {
             vote_name: data.name,
             vote_start_time: start_date,
             vote_end_time: end_date,
-            vote_address: "0x",
+            vote_address: data.address,
             vote_candidate_list: data.candidate_list,
             vote_is_ended: data.is_ended,
             vote_result: data.result
