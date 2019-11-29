@@ -8,11 +8,25 @@ import VoteRegister from './Pages/VoteRegister'
 
 import logo_white from './assets/logo_white.png'
 
-import {Layout, Menu, Button, notification, Icon} from 'antd'
+import {Layout, Menu, Button, notification, Icon, Popover} from 'antd'
 import 'antd/dist/antd.css';
 import './App.css';
 
+const {SubMenu} = Menu;
 const {Header, Content, Footer} = Layout;
+/* 우상단 유저 popover 메뉴 */
+const popover = (
+  <Menu>
+    <SubMenu title="투표 목록">
+      <Menu.Item> 참여한 투표 목록 </Menu.Item>
+      <Menu.Item> 생성한 투표 목록 </Menu.Item>
+    </SubMenu>
+    <SubMenu title="회원 정보 관리" disabled>
+      <Menu.Item>5d menu item</Menu.Item>
+      <Menu.Item>6th menu item</Menu.Item>
+    </SubMenu>
+  </Menu>
+)
 
 class App extends React.Component {
 
@@ -85,6 +99,9 @@ class App extends React.Component {
             </div> : 
             <div>
               <Button type="danger" style = {{margin: "8px 20px 0 0"}} onClick={this.onClickLogoutBtn}> Logout </Button> 
+              <Popover placement="bottomRight" title={this.state.user_email} content={popover} trigger="hover">
+                <Button shape="circle"><Icon type="user" /></Button>
+              </Popover>
             </div>
           }
         </div>
