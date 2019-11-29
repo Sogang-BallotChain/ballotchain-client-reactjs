@@ -5,6 +5,7 @@ import SignupModal from './Components/SignupModal';
 
 import VoteJoin from './Pages/VoteJoin'
 import VoteRegister from './Pages/VoteRegister'
+import VoteList from './Pages/VoteList'
 
 import logo_white from './assets/logo_white.png'
 
@@ -14,24 +15,11 @@ import './App.css';
 
 const {SubMenu} = Menu;
 const {Header, Content, Footer} = Layout;
-/* 우상단 유저 popover 메뉴 */
-const popover = (
-  <Menu>
-    <SubMenu title="투표 목록">
-      <Menu.Item> 참여한 투표 목록 </Menu.Item>
-      <Menu.Item> 생성한 투표 목록 </Menu.Item>
-    </SubMenu>
-    <SubMenu title="회원 정보 관리" disabled>
-      <Menu.Item>5d menu item</Menu.Item>
-      <Menu.Item>6th menu item</Menu.Item>
-    </SubMenu>
-  </Menu>
-)
 
 class App extends React.Component {
 
   state={
-    nav: 'Home',
+    nav: 'JoinList',//nav: 'Home',
     login_modal_visible: false,
     signup_modal_visible: false,
     user_login: false,
@@ -44,6 +32,8 @@ class App extends React.Component {
         return <VoteJoin user_email = {this.state.user_email} user_login={this.state.user_login}/>
       case 'New Ballot': 
         return <VoteRegister user_email = {this.state.user_email} user_login={this.state.user_login}/>
+      case 'JoinList':
+        return <VoteList user_email = {this.state.user_email} user_login={this.state.user_login} flag="join" />
       default: return <div>default nav</div>
     }
   }
@@ -80,6 +70,20 @@ class App extends React.Component {
   }
 
   render () {
+
+  /* 우상단 유저 popover 메뉴 */
+  const popover = (
+    <Menu onSelect = {this.onMenuSelect}>
+      <SubMenu title="투표 목록">
+        <Menu.Item key="JoinList"> 참여한 투표 목록 </Menu.Item>
+        <Menu.Item key="RegisterList"> 생성한 투표 목록 </Menu.Item>
+      </SubMenu>
+      <SubMenu title="회원 정보 관리" disabled>
+        <Menu.Item>5d menu item</Menu.Item>
+        <Menu.Item>6th menu item</Menu.Item>
+      </SubMenu>
+    </Menu>
+  )
   return (
     <Layout className="layout" style={{minWidth: "720px"}}>
       {/* Header */}
