@@ -72,7 +72,6 @@ class LoginModal extends React.Component {
         e.preventDefault();
         form.validateFields(async (err, values) => {
             if (!err) {
-                console.log('Received values of form: ', values);
                 const res = await axios.post('/user/signin', {
                     "email": values.username,
                     "password": values.password
@@ -90,7 +89,7 @@ class LoginModal extends React.Component {
                     }
                 }
                 else {
-                    console.log("Login error")
+                    console.log("Login error, server not connected!")
                     this.props.onLoginFailed()
                 }
             }
