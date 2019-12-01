@@ -39,7 +39,7 @@ const LoginForm = Form.create({name: 'login'}) (
                                     )}
                                 </Form.Item>
                                 <Form.Item>
-                                    <Button type="primary" style={{backgroundColor: "green", borderColor: "green"} } htmlType="submit" className="login-form-button" block>
+                                    <Button type="primary" loading={this.props.loading} style={{backgroundColor: "green", borderColor: "green"}} htmlType="submit" className="login-form-button" block>
                                         Check
                                     </Button>
                                 </Form.Item>
@@ -53,6 +53,10 @@ const LoginForm = Form.create({name: 'login'}) (
 );
 
 class EmailModal extends React.Component {
+
+    state = {
+        loading: false
+    }
 
     saveFormRef = (formRef) => {
         this.formRef = formRef;
@@ -92,7 +96,10 @@ class EmailModal extends React.Component {
         form.validateFields(async (err, values) => {
             if (!err) {
                 console.log('Received values of form: ', values);
-                console.log('check clicked')
+                
+                this.setState({
+                    loading: true
+                })
                 const res = await axios.post('/vote/check/', {
                     "email": this.props.user_email,
                     "code": values.email_verification_code,
@@ -114,6 +121,10 @@ class EmailModal extends React.Component {
                     console.log("Verification error")
                     this.props.onFail()
                 }
+
+                this.setState({
+                    loading: false
+                })
             }
         })
     }
@@ -125,6 +136,7 @@ class EmailModal extends React.Component {
                 visible = {this.props.visible}
                 onCancel = {this.handleCancel}
                 onSubmit = {this.handleSubmit}
+                loading = {this.state.loading}
             />
         )
     }
