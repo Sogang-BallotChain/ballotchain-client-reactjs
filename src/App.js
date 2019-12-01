@@ -46,6 +46,7 @@ class App extends React.Component {
       user_email: "",
       user_login: false
     })
+    window.location.reload()
   }
 
   onLoginSuccess = (user_email) => {
@@ -100,7 +101,8 @@ class App extends React.Component {
       <Header>
         <div className="logo">
           <img  src={logo_white} 
-          style={{margin: "16px 24px 16px 0", position: "absolute", top: 0}}alt="fireSpot"/>
+          style={{margin: "16px 24px 16px 0", position: "absolute", top: 0}}alt="fireSpot"
+          onClick={()=>{window.location.reload();}}/>
         </div>
 
         {/* Sign up & Login buttons */}
