@@ -129,8 +129,8 @@ class App extends React.Component {
           style = {{lineHeight: '64px'}}
           onSelect = {this.onMenuSelect}
         >
-          <Menu.Item key="Home"> Home </Menu.Item>
-          <Menu.Item key="New Ballot"> New Ballot </Menu.Item>
+          <Menu.Item key="Home" onClick={()=>{this.setState({nav: 'Home'})}}> Home </Menu.Item>
+          <Menu.Item key="New Ballot" onClick={()=>{this.setState({nav: 'New Ballot'})}}> New Ballot </Menu.Item>
         </Menu>
       </Header>
 

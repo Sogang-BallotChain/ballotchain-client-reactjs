@@ -50,9 +50,8 @@ const SignupForm = Form.create({name: 'signin'})(
                         <Form onSubmit = {this.props.onSubmit}> 
                             <Form.Item label="Email">
                                 {getFieldDecorator('email', {
-                                    rules: [{
-                                        required: true, message: 'Please input your email!',
-                                    }]
+                                    rules: [{type: 'email',message: 'The input is not valid E-mail!',},
+                                    {required: true, message: 'Please input your email!',}]
                                 }) (
                                     <Input />
                                 )}

@@ -30,7 +30,9 @@ const LoginForm = Form.create({name: 'login'}) (
                             <Form onSubmit = {this.props.onSubmit} className="login-form">
                                 <Form.Item>
                                     {getFieldDecorator('username', {
-                                        rules: [{ required: true, message: 'Please input your email!' }],
+                                        rules: [
+                                            {type: 'email',message: 'The input is not valid E-mail!',},
+                                            {required: true, message: 'Please input your email!' }],
                                     })(
                                         <Input prefix={<Icon type="user" style={{ color: 'rgba(0, 0, 0, .25)' }} />} placeholder="Email" />
                                     )}
