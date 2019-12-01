@@ -1,0 +1,8 @@
+{
+	"apps": [{
+		"name": "ballotchain-client-reactjs",
+		"script": "npm",
+		"interpreter": "none",
+		"args": "start"
+	}]
+}
