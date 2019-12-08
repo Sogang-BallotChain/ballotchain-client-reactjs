@@ -24,7 +24,8 @@ class App extends React.Component {
     login_modal_visible: false,
     signup_modal_visible: false,
     user_login: false,
-    user_email: ""
+    user_email: "",
+    menu_switch: false
   }
 
   getContent() {
@@ -69,14 +70,17 @@ class App extends React.Component {
   onMenuSelect = (obj) => {
     const selected_menu = obj.key
     this.setState({
-      nav: selected_menu
+      nav: selected_menu,
+      menu_switch: !this.state.menu_switch
     })
   }
 
   onPopoverSelect = (obj) => {
-    const selected_popover = obj.key
+    const selected_menu = obj.key
+    obj.selectedKeys.pop()
     this.setState({
-      nav: selected_popover
+      nav: selected_menu,
+      menu_switch: !this.state.menu_switch
     })
   }
 
@@ -129,8 +133,8 @@ class App extends React.Component {
           style = {{lineHeight: '64px'}}
           onSelect = {this.onMenuSelect}
         >
-          <Menu.Item key="Home" onClick={()=>{this.setState({nav: 'Home'})}}> Home </Menu.Item>
-          <Menu.Item key="New Ballot" onClick={()=>{this.setState({nav: 'New Ballot'})}}> New Ballot </Menu.Item>
+          <Menu.Item key="Home" onClick={()=> {this.setState({nav: "Home"})}}> Home </Menu.Item>
+          <Menu.Item key="New Ballot" onClick={()=> {this.setState({nav: "Home"})}}> New Ballot </Menu.Item>
         </Menu>
       </Header>
 
