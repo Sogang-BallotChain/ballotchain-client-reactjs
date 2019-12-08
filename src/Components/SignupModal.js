@@ -126,7 +126,7 @@ class SignupModal extends React.Component {
 
                 let email_array = values.email.split("@")
                 console.log(email_array)
-                if (email_array !== "sogang.ac.kr") {
+                if (email_array[1] !== "sogang.ac.kr") {
                     notification.open({
                         message: '서강대학교 이메일이 아닙니다!',
                         description: '@sogang.ac.kr 이메일을 입력해주세요!',
