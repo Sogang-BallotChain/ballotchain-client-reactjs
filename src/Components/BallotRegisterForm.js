@@ -3,6 +3,7 @@ import {Form, Input, Button, Icon, DatePicker, Result, Spin, Row, Col, notificat
 
 import VoteJoin from '../Pages/VoteJoin'
 import EmailModal from './EmailModal'
+import Uploader from './Uploader'
 
 import './BallotRegisterForm.css'
 import axios from 'axios'
@@ -24,6 +25,7 @@ class BallotRegisterForm extends React.Component {
       ballot_email: '', 
       ballot_name: '',
       ballot_candidate_list: [],
+      ballot_voter_list: [],
       ballot_start_time: 0,
       ballot_end_time: 0
     }
@@ -180,14 +182,27 @@ class BallotRegisterForm extends React.Component {
                       })(<Input placeholder={"투표 주제를 입력해주세요"}/>)}   
               </Form.Item>
               <hr style={{ display: "block", height: "1px", border: 0, borderTop: "1px solid #dcdcdc", margin: "1em 0", padding: 0 }} />
-              <Form.Item label="2. 후보자를 추가해주세요">
+              <Form.Item label="2. 후보자를 추가해주세요 (필수)">
                   {formItems}
               </Form.Item>
+
               <Form.Item {...addCandidateBtnLayout}>
                   <Button type="default" onClick={this.addCandidate} style={{ width: '30%' }}>
                   <Icon type="plus" /> 후보 추가
               </Button>
               </Form.Item>
+
+              <hr style={{ display: "block", height: "1px", border: 0, borderTop: "1px solid #dcdcdc", margin: "1em 0", padding: 0 }} />
+              <Form.Item label="3. 유권자를 추가해주세요 (선택)">
+                  <Uploader onUploadSuccess = {(rows) => {
+                    let voter_list = []
+                    rows.forEach(row => {
+                      voter_list = voter_list.concat(row)
+                    })
+                    this.setState({ballot_voter_list: voter_list})
+                  }}/>
+              </Form.Item>
+              
               <hr style={{ display: "block", height: "1px", border: 0, borderTop: "1px solid #dcdcdc", margin: "1em 0", padding: 0 }} />
               <Row>
                 <Col span={24}>
@@ -255,6 +270,7 @@ class BallotRegisterForm extends React.Component {
         "email": this.state.ballot_email,
         "name": this.state.ballot_name,
         "candidate_list": this.state.ballot_candidate_list,
+        "voter_list": this.state.ballot_voter_list,
         "start_time": this.state.ballot_start_time,
         "end_time": this.state.ballot_end_time
       })

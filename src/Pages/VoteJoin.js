@@ -25,6 +25,7 @@ class VoteJoin extends React.Component {
         vote_end_time: 0,
         vote_addres: "",
         vote_candidate_list: [],
+        vote_voter_list: [],
         vote_is_ended: false,
         vote_result: {}
     }
@@ -44,6 +45,7 @@ class VoteJoin extends React.Component {
             vote_end_time: end_date,
             vote_address: data.address,
             vote_candidate_list: data.candidate_list,
+            vote_voter_list: data.voter_list,
             vote_is_ended: data.is_ended,
             vote_result: data.result
         })
@@ -120,6 +122,7 @@ class VoteJoin extends React.Component {
                     end_time = {this.state.vote_end_time}
                     address = {this.state.vote_address}
                     candidate_list={this.state.vote_candidate_list}
+                    voter_list = {this.state.vote_voter_list}
                     is_ended = {this.state.vote_is_ended}
                     result = {this.state.vote_result}
                 />

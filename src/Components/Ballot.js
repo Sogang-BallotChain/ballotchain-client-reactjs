@@ -1,5 +1,5 @@
 import React from 'react'
-import {Radio, Descriptions, Button, Form, Icon, Result, Spin, notification} from 'antd'
+import {Radio, Descriptions, Button, Form, Icon, Result, Spin, Row, Col, Statistic, notification} from 'antd'
 import {BarChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend, Bar} from 'recharts'
 import './Ballot.css'
 import axios from 'axios'
@@ -17,6 +17,7 @@ const radioStyle = {
 /*
     Props
     - user_email, user_login, vote_id, name, start_time, end_time, address, candidates_list, is_ended, result
+    - voter_list
  */
 
 /* 투표 용지 컴포넌트 */
@@ -134,20 +135,38 @@ class Ballot extends React.Component {
     ballotResult = () => {
         console.log(this.props.result)
         let vote_result = []
+        var voted = 0 // 투표 수
+        var num_voter = this.props.voter_list.length
+        if (num_voter === 0) num_voter = 8302
+
         for(let name in this.props.result) {
             vote_result.push({
                 candidate_name: name,
                 vote_count: this.props.result[name]
             })
+            voted += this.props.result[name]
         }
 
         return (
             <React.Fragment>
             {this.ballotInfo()}
-            <div className="ballot"> 
-                <Descriptions title="2. 투표 결과">
-                </Descriptions> 
 
+            <div className="ballot"> 
+                <Descriptions title="2. 투표율"></Descriptions> 
+                <Row gutter={24}>
+                    <Col span={8}>
+                    <Statistic title="유권자 수" value={num_voter} prefix={<Icon type="user" />} />
+                    </Col>
+                    <Col span={8}>
+                    <Statistic title="투표자 수" value={voted} prefix={<Icon type="like" />}/>
+                    </Col>
+                    <Col span={8}>
+                    <Statistic title="투표율" value={(voted * 100 / num_voter)} suffix="%" />
+                    </Col>
+                </Row>
+
+                <hr style={{ display: "block", height: "1px", border: 0, borderTop: "1px solid #dcdcdc", margin: "1em 0", padding: 0 }} />
+                <Descriptions title="3. 투표 결과"></Descriptions> 
                 <BarChart width={730} height={250} data={vote_result}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="candidate_name" />
@@ -185,7 +204,7 @@ class Ballot extends React.Component {
             let res = await axios.post('/vote/', {
                 "email": this.props.user_email,
                 "vote_id": this.props.vote_id,
-                "candidate": this.state.selected_candidate //values.candidate_list
+                "candidate": this.state.selected_candidate
             })
             console.log(res)
 
@@ -193,11 +212,13 @@ class Ballot extends React.Component {
             if (res.status === 200) {
                 let json_body = res.data
                 let success = json_body.success
+                let message = json_body.message
                 if (success === 1) {
                     this.setState({ nav: 'vote_success' })
                 }
                 else {
-                    this.setState({ nav: 'vote_warning' })
+                    if (message === 'You are not allowed.')
+                    this.setState({ nav: 'vote_not_allowed' })
                 }
             }
             else if (res.status === 504) {
@@ -236,7 +257,8 @@ class Ballot extends React.Component {
             case 'select': return this.candidateSelect();
             case 'result': return this.ballotResult();
             case 'vote_success': return this.onVoteSuccess("success", "투표 성공!", "Voting success!");
-            case 'vote_warning': return this.onVoteSuccess("warning", "중복 투표 감지!", "Duplicate voting!")
+            case 'vote_warning': return this.onVoteSuccess("warning", "중복 투표 감지!", "Duplicate voting!");
+            case 'vote_not_allowed': return this.onVoteSuccess("warning", "해당 투표에 대한 유권자로 설정되어 있지 않습니다.", "투표 생성자에게 문의하세요");
             case 'vote_fail': return this.onVoteSuccess("error", "투표 실패!", "관리자에게 문의하세요")
             case 'home': return <VoteJoin user_email={this.props.user_email} user_login={this.props.user_login}/>
             case 'loading': return this.loading(this.candidateSelect())
