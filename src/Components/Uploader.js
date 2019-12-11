@@ -13,16 +13,17 @@ class Uploader extends React.Component {
             multiple: false,
             onChange(info) {
               const { status } = info.file;
-              console.log(info.file)
               
               if (status !== 'uploading') {
-                console.log(info.file, info.fileList);
+                
               }
               if (status === 'done') {
                 message.success(`${info.file.name} file uploaded successfully.`);
 
                 /* Read excel file */
-                readXlsxFile(info.file.originFileObj).then(onUploadSuccess)
+                readXlsxFile(info.file.originFileObj)
+                  .then(onUploadSuccess)
+                  .catch(console.log)
               } else if (status === 'error') {
                 message.error(`${info.file.name} file upload failed.`);
               }
@@ -33,9 +34,9 @@ class Uploader extends React.Component {
             <p className="ant-upload-drag-icon">
               <Icon type="inbox" />
             </p>
-            <p className="ant-upload-text"> 파일을 업로드하여 투표자를 추가할 수 있습니다! </p>
+            <p className="ant-upload-text"> 엑셀 파일을 업로드하여 유권자를 추가할 수 있습니다! </p>
             <p className="ant-upload-hint">
-              투표자를 정하지 않을 경우, 모든 사용자가 귀하의 투표에 참여할 수 있습니다!
+              유권자를 추가하지 않을 경우, 모든 사용자가 귀하의 투표에 참여할 수 있습니다.
             </p>
           </Dragger>
         )

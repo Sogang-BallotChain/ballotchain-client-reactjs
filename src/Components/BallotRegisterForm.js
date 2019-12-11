@@ -200,6 +200,7 @@ class BallotRegisterForm extends React.Component {
                       voter_list = voter_list.concat(row)
                     })
                     this.setState({ballot_voter_list: voter_list})
+                    console.log(this.state.ballot_voter_list)
                   }}/>
               </Form.Item>
               
