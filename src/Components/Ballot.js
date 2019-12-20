@@ -218,7 +218,9 @@ class Ballot extends React.Component {
                 }
                 else {
                     if (message === 'You are not allowed.')
-                    this.setState({ nav: 'vote_not_allowed' })
+                        this.setState({ nav: 'vote_not_allowed' })
+                    else
+                        this.setState({nav: 'vote_warning'})
                 }
             }
             else if (res.status === 504) {
